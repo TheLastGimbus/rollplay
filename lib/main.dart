@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'pages/settings_page.dart';
+import 'package:rollplay/router.dart';
 
 void main() {
+  initRouter();
   runApp(MyApp());
 }
 
@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Roll-Play',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      initialRoute: Routes.home,
+      onGenerateRoute: router.generator,
     );
   }
 }
@@ -32,9 +33,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("Roll-Play"),
         leading: IconButton(
           icon: Icon(Icons.settings),
-          // TODO: Change this shit to fluro
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => SettingsPage())),
+          onPressed: () => router.navigateTo(context, Routes.settings),
         ),
       ),
       body: Center(child: Text("Hello there!")),
