@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart';
-import 'package:rollplay/main.dart';
 
+import 'pages/home_page.dart';
 import 'pages/settings_page.dart';
 
 final router = FluroRouter();
@@ -18,6 +18,6 @@ void initRouter() {
   router.define(
     Routes.settings,
     handler: Handler(handlerFunc: (ctx, params) => SettingsPage()),
-    transitionType: TransitionType.nativeModal,
+    transitionType: TransitionType.inFromRight,
   );
 }
