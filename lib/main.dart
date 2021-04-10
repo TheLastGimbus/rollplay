@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Roll Play',
+      title: 'Roll-Play',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: MyHomePage(),
     );
@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Roll Play")),
+      appBar: AppBar(title: Text("Roll-Play")),
       body: Center(),
     );
   }

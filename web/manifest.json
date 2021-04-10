@@ -1,6 +1,6 @@
 {
-    "name": "rollplay",
-    "short_name": "rollplay",
+    "name": "Roll-Play",
+    "short_name": "RollPlay",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
