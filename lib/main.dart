@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Roll-Play',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         initialRoute: Routes.home,
         onGenerateRoute: router.generator,
       ),
