@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rollapi/rollapi.dart' as roll;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../settings.dart' as prefs;
@@ -44,6 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
           decoration: InputDecoration(hintText: prefs.Default.API_BASE_URL),
           onChanged: (str) {
             if (!str.endsWith('/')) str += '/';
+            roll.API_BASE_URL = str;
             sp.setString(prefs.Key.API_BASE_URL, str);
           },
         ),
