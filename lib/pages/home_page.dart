@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rollapi/rollapi.dart' as roll;
 
-import '../router.dart';
-
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
 
@@ -78,15 +76,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Roll-Play"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () => router.navigateTo(context, Routes.settings),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text("Roll-Play")),
       body: Container(
         padding: EdgeInsets.all(36),
         child: Align(
