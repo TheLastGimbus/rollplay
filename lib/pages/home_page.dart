@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     Widget runningWidget(DateTime eta) =>
-        Text('Your dice is rolling RIGHT NOW!');
+        Text('Your dice is rolling RIGHT NOW!', style: t.textTheme.headline4);
 
     Widget failedWidget(String message) =>
         Text('Failed :( $message \nTry again');
