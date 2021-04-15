@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rollapi/rollapi.dart' as roll;
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -76,7 +77,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text("Roll-Play")),
+      appBar: AppBar(
+        title: Text("Roll-Play"),
+        centerTitle: true,
+        actions: [
+          // ignore: deprecated_member_use
+          FlatButton(
+            colorBrightness: Brightness.dark,
+            child: Text('What is this?? \u{1F517}'),
+            onPressed: () =>
+                launch('https://github.com/TheLastGimbus/Roll-API'),
+          ),
+        ],
+      ),
       body: Container(
         padding: EdgeInsets.all(36),
         child: Align(

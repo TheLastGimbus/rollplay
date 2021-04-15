@@ -20,6 +20,9 @@ dependencies:
   # Logic
   rollapi: ^1.2.1
 
+  # Platform plugins
+  url_launcher: ^6.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
