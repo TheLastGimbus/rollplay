@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DateTime begin;
   roll.Request request;
+  DateTime _lastStateTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +87,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     }
 
+    Future<T> minDelayFuture<T>(Future<T> future, Duration minDelay) async =>
+        (await Future.wait([Future.delayed(minDelay), future]))[1];
+
+    Stream<T> minDelayStream<T>(Stream<T> stream, Duration minDelay) =>
+        stream.asyncMap<T>(
+          (e) async {
+            var state = await minDelayFuture<T>(
+              Future.value(e),
+              _lastStateTime.add(minDelay).difference(DateTime.now()),
+            );
+            _lastStateTime = DateTime.now();
+            return state;
+          },
+        );
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Roll-Play"),
@@ -109,7 +125,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               : request == null
                   ? requestingWidget()
                   : StreamBuilder(
-                      stream: request.stateStream,
+                      stream:
+                          minDelayStream<MapEntry<roll.RequestState, dynamic>>(
+                        request.stateStream,
+                        Duration(seconds: 1),
+                      ),
                       builder: (
                         ctx,
                         AsyncSnapshot<MapEntry<roll.RequestState, dynamic>>
@@ -138,11 +158,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             begin = DateTime.now();
             request = null;
             setState(() {});
-            request = (await Future.wait([
-              Future.delayed(Duration(seconds: 3)),
+            request = await minDelayFuture(
               roll.makeRequest().timeout(Duration(seconds: 8)),
-            ]))[1];
-            setState(() {});
+              Duration(seconds: 3),
+            );
           } on roll.RateLimitException catch (e) {
             print(e);
             showSnack(
@@ -165,6 +184,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           } catch (e) {
             print(e);
             showSnack('Some error :/\n$e');
+          } finally {
+            // request wasn't finished because of some error
+            if (begin != null && request == null) {
+              // Clear the begin to set state to initial
+              begin = null;
+            }
+            setState(() {});
           }
         },
       ),
