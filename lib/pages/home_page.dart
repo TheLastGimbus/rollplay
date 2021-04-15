@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rollapi/rollapi.dart' as roll;
@@ -20,6 +22,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Widget noRequestWidget() => Text(
           'Go ahead, press the button below to roll a dice!',
           style: t.textTheme.headline4,
+        );
+
+    Widget requestingWidget() => Column(
+          children: [
+            Text('Rolling...', style: t.textTheme.headline3),
+            SizedBox(height: 36),
+            CircularProgressIndicator(),
+          ],
         );
 
     Widget queuedWidget(DateTime eta) {
@@ -94,30 +104,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         padding: EdgeInsets.all(36),
         child: Align(
           alignment: Alignment.topCenter,
-          child: request != null
-              ? StreamBuilder(
-                  stream: request.stateStream,
-                  builder: (
-                    ctx,
-                    AsyncSnapshot<MapEntry<roll.RequestState, dynamic>> snap,
-                  ) =>
-                      ListView(
-                    children: [
-                      Center(child: SelectableText(request.uuid)),
-                      SizedBox(height: 36),
-                      snap.hasData ? rollSwitch(snap.data) : Text('Wait...'),
-                    ],
-                  ),
-                )
-              : noRequestWidget(),
+          child: begin == null
+              ? noRequestWidget()
+              : request == null
+                  ? requestingWidget()
+                  : StreamBuilder(
+                      stream: request.stateStream,
+                      builder: (
+                        ctx,
+                        AsyncSnapshot<MapEntry<roll.RequestState, dynamic>>
+                            snap,
+                      ) =>
+                          ListView(
+                        children: [
+                          Center(child: SelectableText(request.uuid)),
+                          SizedBox(height: 36),
+                          Center(
+                            child: snap.hasData
+                                ? rollSwitch(snap.data)
+                                : Text('Wait...'),
+                          ),
+                        ],
+                      ),
+                    ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         label: Text('Roll the dice!'),
         onPressed: () async {
-          request = await roll.makeRequest();
-          begin = DateTime.now();
-          setState(() {});
+          showSnack(String text) => ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(text)));
+          try {
+            begin = DateTime.now();
+            request = null;
+            setState(() {});
+            request = (await Future.wait([
+              Future.delayed(Duration(seconds: 3)),
+              roll.makeRequest().timeout(Duration(seconds: 8)),
+            ]))[1];
+            setState(() {});
+          } on roll.RateLimitException catch (e) {
+            print(e);
+            showSnack(
+              'You rolled to many times!' +
+                  (e.limitReset != null
+                      ? '\nTry again in ${e.limitReset.difference(DateTime.now()).inSeconds} seconds'
+                      : ''),
+            );
+          } on roll.ApiUnavailableException catch (e) {
+            print(e);
+            var t = 'API is currently unavailable :(';
+            if (e.message?.isNotEmpty ?? false) t += '\n' + e.message;
+            showSnack(t);
+          } on roll.ApiException catch (e) {
+            print(e);
+            showSnack('Something went wrong: $e\nTry again');
+          } on TimeoutException catch (e) {
+            print(e);
+            showSnack("Can't reach the API! Try again later");
+          } catch (e) {
+            print(e);
+            showSnack('Some error :/\n$e');
+          }
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
