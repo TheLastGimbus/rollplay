@@ -1,0 +1,43 @@
+name: Netlify deploy
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Flutter
+      uses: actions/cache@v1
+      with:
+        path: /opt/hostedtoolcache/flutter
+        key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+    - uses: subosito/flutter-action@v1.5.3
+      with:
+        flutter-version: ${{ env.flutter_version }}
+    - run: flutter build web
+    # Remove fonts to make it lighter
+    - run:  rm build/web/assets/fonts/MaterialIcons-Regular.otf 
+
+    # Change folder name for it to route correclty
+    - run: mv build/web/ build/rollplay/
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v1.2.2
+      with:
+        # Deploy it like "site.com/unifuck", not just "site.com"
+        publish-dir: './build'
+        production-branch: master
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+        enable-pull-request-comment: true
+        enable-commit-comment: true
+        overwrites-pull-request-comment: true
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      timeout-minutes: 1
