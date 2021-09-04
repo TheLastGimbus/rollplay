@@ -31,11 +31,22 @@
 
   <style>
     h1{text-align: center;}
+    .center{display: flex; justify-content: center;}
   </style>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 <body>
 
-  <h1>Wait a second, loading...</h1>
+  <div class="center">
+    <lottie-player
+            src="https://assets9.lottiefiles.com/packages/lf20_PBgNop.json"
+            background="transparent"
+            speed="1"
+            style="width: 600px"
+            autoplay
+            loop
+    ></lottie-player>
+  </div>
 
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
