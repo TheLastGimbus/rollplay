@@ -66,6 +66,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 tightMode: true,
                 imageProvider:
                     NetworkImage('${roll.API_BASE_URL}image/${request.uuid}'),
+                scaleStateCycle: (scaleState) =>
+                    scaleState == PhotoViewScaleState.initial
+                        ? PhotoViewScaleState.covering
+                        : PhotoViewScaleState.initial,
               ),
             ),
           ],
