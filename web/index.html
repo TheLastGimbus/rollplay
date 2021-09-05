@@ -31,7 +31,17 @@
 
   <style>
     h1{text-align: center;}
-    .center{display: flex; justify-content: center;}
+    .center{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
   </style>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
@@ -42,7 +52,7 @@
             src="https://assets9.lottiefiles.com/packages/lf20_PBgNop.json"
             background="transparent"
             speed="1"
-            style="width: 600px"
+            style="width: 400px"
             autoplay
             loop
     ></lottie-player>
