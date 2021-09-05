@@ -31,18 +31,72 @@
 
   <style>
     h1{text-align: center;}
+    .center{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      max-width: 1000px;
+      width: 100%;
+      z-index: 99 !important;
+      background: white;
+    }
+    #anim-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 98 !important;
+      background: white;
+      transition: opacity 200ms;
+    }
   </style>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 <body>
-
-  <h1>Wait a second, loading...</h1>
+<div id="anim-container">
+  <div class="center">
+    <lottie-player
+            id="loading-lottie-player"
+            src="lottie/data.json"
+            background="transparent"
+            speed="1"
+            autoplay
+            renderer="svg"
+    ></lottie-player>
+  </div>
+</div>
 
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <!--  It also handles loading animation! -->
   <script>
+    // Those two must be true for animation to hide
+    var animFinished = false;
+    var flutterLoaded = false;
+    function hideAnim() {
+      if(animFinished && flutterLoaded) {
+        let anim = document.getElementById("anim-container");
+        anim.addEventListener('transitionend', () => anim.remove());
+        anim.style.opacity = '0';
+      }
+    }
+    document.getElementById("loading-lottie-player").addEventListener('complete', function () {
+      setTimeout(function () {
+        animFinished = true;
+        hideAnim();
+      }, 500)
+    });
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('flutter-first-frame', function () {
+        flutterLoaded = true;
+        hideAnim();
         navigator.serviceWorker.register('flutter_service_worker.js');
       });
     }
