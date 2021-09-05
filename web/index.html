@@ -52,6 +52,7 @@
       height: 100%;
       z-index: 98 !important;
       background: white;
+      transition: opacity 200ms;
     }
   </style>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -79,13 +80,17 @@
     var animFinished = false;
     var flutterLoaded = false;
     function hideAnim() {
-      if(animFinished && flutterLoaded) document.getElementById("anim-container").remove();
+      if(animFinished && flutterLoaded) {
+        let anim = document.getElementById("anim-container");
+        anim.addEventListener('transitionend', () => anim.remove());
+        anim.style.opacity = '0';
+      }
     }
     document.getElementById("loading-lottie-player").addEventListener('complete', function () {
       setTimeout(function () {
         animFinished = true;
         hideAnim();
-      }, 1000)
+      }, 500)
     });
 
     if ('serviceWorker' in navigator) {
